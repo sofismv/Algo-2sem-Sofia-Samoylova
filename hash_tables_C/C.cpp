@@ -1,5 +1,21 @@
-#include <iostream>
 #include <vector>
+#include <iostream>
+
+bool check_current(long long x, long long y, long long W, long long H) {
+  return (x >= 0 && y >= 0 && x < W && y < H);
+}
+bool check_left(long long x, long long y, long long W, long long H) {
+  return (x - 1 >= 0 && y >= 0 && x - 1 < W && y < H);
+}
+bool check_down(long long x, long long y, long long W, long long H) {
+  return (x >= 0 && y - 1 >= 0 && x < W && y - 1 < H);
+}
+bool check_right(long long x, long long y, long long W, long long H) {
+  return (x + 1 >= 0 && y >= 0 && x + 1 < W && y < H);
+}
+bool check_up(long long x, long long y, long long W, long long H) {
+  return (x >= 0 && y + 1 >= 0 && x < W && y + 1 < H);
+}
 
 int main() {
   std::ios_base::sync_with_stdio(false);
@@ -25,21 +41,11 @@ int main() {
     std::cin >> x >> y;
     x--;
     y--;
-    if (x >= 0 && y >= 0 && x < W && y < H) {
-      table[x][y] = true;
-    }
-    if (x - 1 >= 0 && y >= 0 && x - 1 < W && y < H) {
-      table[x - 1][y] = true;
-    }
-    if (x >= 0 && y - 1 >= 0 && x < W && y - 1 < H) {
-      table[x][y - 1] = true;
-    }
-    if (x + 1 >= 0 && y >= 0 && x + 1 < W && y < H) {
-      table[x + 1][y] = true;
-    }
-    if (x >= 0 && y + 1 >= 0 && x < W && y + 1 < H) {
-      table[x][y + 1] = true;
-    }
+    table[x][y] = check_current(x, y, W, H);
+    table[x - 1][y] = check_left(x, y, W, H);
+    table[x][y - 1] = check_down(x, y, W, H);
+    table[x + 1][y] = check_left(x, y, W, H);
+    table[x][y + 1] = check_up(x, y, W, H);
   }
   for (int i = 0; i < W; ++i) {
     for (int j = 0; j < H; ++j) {
