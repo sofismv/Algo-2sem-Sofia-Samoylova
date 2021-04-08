@@ -1,69 +1,52 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 
 std::vector<std::vector<int>> g;
 std::vector<int> tin;
 std::vector<int> tout;
-std::vector<int> parent;
 int n;
-int cycle_vertex;
 int timer = 0;
-std::vector<std::string> color;
+std::vector<int> used;
 
-bool dfs(int v) {
+void dfs(int v) {
   tin[v] = timer++;
-  color[v] = "GRAY";
+  used[v] = 1;
   for (int to : g[v]) {
-    if (color[to] == "WHITE") {
-      parent[to] = v;
-      if (dfs(to)) {
-        return true;
-      }
+    if (used[to]) {
+      continue;
     }
-    if (color[to] == "GRAY") {
-      parent[to] = v;
-      cycle_vertex = v;
-      return true;
-    }
+    dfs(to);
   }
   tout[v] = timer++;
-  color[v] = "BLACK";
-  return false;
 }
 
+bool is_parent (int a, int b) {
+  return tout[a] > tout[b] && tin[a] < tin[b];
+}
+
+
 int main() {
-  int m, u, v;
-  std::cin >> n >> m;
+  int n, parent, m, a, b, root;
+  std::cin >> n;
   g.resize(n);
   tin.resize(n);
   tout.resize(n);
-  parent.resize(n);
-  color.resize(n, "WHITE");
-  std::vector<int> ans;
-  for (int i = 0; i < m; ++i) {
-    std::cin >> u >> v;
-    --u; --v;
-    g[u].push_back(v);
-  }
-  for (int v = 0; v < n; ++v) {
-    if (color[v] == "WHITE") {
-      if (dfs(v)) {
-        std::cout << "YES\n";
-        int vertex = parent[cycle_vertex];
-        while (vertex != cycle_vertex) {
-          ans.push_back(vertex + 1);
-          vertex = parent[vertex];
-        }
-        ans.push_back(cycle_vertex + 1);
-        std::reverse(ans.begin(), ans.end());
-        for (auto i : ans){
-          std::cout << i << ' ';
-        }
-        return 0;
-      }
+  used.resize(n);
+  for (int i = 0; i < n; ++i) {
+    std::cin >> parent;
+    if (parent == 0) {
+      root = i;
+      continue;
     }
+    parent--;
+    g[parent].push_back(i);
   }
-  std::cout << "NO";
+  dfs(root);
+  std::cin >> m;
+  for (int i = 0; i < m; ++i) {
+    std::cin >> a >> b;
+    --a; --b;
+    std::cout << is_parent(a, b) << '\n';
+  }
   return 0;
 }
