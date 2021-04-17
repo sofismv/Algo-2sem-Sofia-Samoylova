@@ -6,13 +6,12 @@ struct edge {
   int to;
   edge(int from, int to) : from(from), to(to) {}
 };
-int n;
-std::vector<edge> edges;
-std::vector<bool> used;
-std::vector<int> ptr;
-std::vector<edge> ans;
-std::vector<std::vector<int>> g;
-void euler_cycle(int v) {
+void euler_cycle(const std::vector<edge> &edges,
+                 std::vector<int> &ptr,
+                 const std::vector<std::vector<int>> &g,
+                 std::vector<bool> &used,
+                 std::vector<edge> &ans,
+                 int v) {
   while (ptr[v] != g[v].size()) {
     int e = g[v][ptr[v]];
     if (used[e]) {
@@ -21,16 +20,19 @@ void euler_cycle(int v) {
     }
     int u = edges[e].to;
     used[e] = true;
-    euler_cycle(u);
+    euler_cycle(edges, ptr, g, used, ans, u);
     ans.push_back(edges[e]);
   }
 }
 
 int main() {
-  int a, k;
+  int a, k, n;
   std::cin >> n >> a;
-  g.resize(n);
-  ptr.resize(n);
+  std::vector<edge> edges;
+  std::vector<bool> used;
+  std::vector<int> ptr(n);
+  std::vector<edge> ans;
+  std::vector<std::vector<int>> g(n);
   for (int i = 0; i < n; ++i) {
     for (int j = 0; j < n; ++j) {
       std::cin >> k;
@@ -41,7 +43,7 @@ int main() {
     }
   }
   used.resize(edges.size(), false);
-  euler_cycle(a - 1);
+  euler_cycle(edges, ptr, g, used, ans, a - 1);
   for (int i = ans.size() - 1; i >= 0; --i) {
     std::cout << ans[i].from + 1 << ' ' << ans[i].to + 1 << '\n';
   }
