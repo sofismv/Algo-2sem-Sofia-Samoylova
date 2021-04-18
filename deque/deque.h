@@ -36,6 +36,14 @@ class Deque {
     head_buf_ind = new_head_buf_ind;
   }
 
+  void swap(Deque &other) {
+    std::swap(size_, other.size_);
+    std::swap(buffer_size, other.buffer_size);
+    std::swap(head_chunk_ind, other.head_chunk_ind);
+    std::swap(head_buf_ind, other.head_buf_ind);
+    std::swap(buffer, other.buffer);
+  }
+
  public:
 
   // constructors
@@ -65,14 +73,6 @@ class Deque {
     } catch (...) {
       throw;
     }
-  }
-
-  void swap(Deque &other) {
-    std::swap(size_, other.size_);
-    std::swap(buffer_size, other.buffer_size);
-    std::swap(head_chunk_ind, other.head_chunk_ind);
-    std::swap(head_buf_ind, other.head_buf_ind);
-    std::swap(buffer, other.buffer);
   }
 
   Deque &operator=(const Deque &other) {
@@ -121,6 +121,12 @@ class Deque {
     std::conditional_t<is_const, const T *, T *> ptr;
 
     const std::vector<T *> *vector_pointer;
+
+    void recalculate_position(size_t index) {
+      cur_chunk_index = index % chunk_size;
+      cur_buff_index = index / chunk_size;
+      ptr = (*vector_pointer)[cur_buff_index] + cur_chunk_index;
+    }
 
    public:
 
@@ -175,17 +181,13 @@ class Deque {
 
     common_iterator &operator+=(int x) {
       size_t index = cur_buff_index * chunk_size + cur_chunk_index + x;
-      cur_chunk_index = index % chunk_size;
-      cur_buff_index = index / chunk_size;
-      ptr = (*vector_pointer)[cur_buff_index] + cur_chunk_index;
+      recalculate_position(index);
       return *this;
     }
 
     common_iterator &operator-=(int x) {
       size_t index = cur_buff_index * chunk_size + cur_chunk_index - x;
-      cur_chunk_index = index % chunk_size;
-      cur_buff_index = index / chunk_size;
-      ptr = (*vector_pointer)[cur_buff_index] + cur_chunk_index;
+      recalculate_position(index);
       return *this;
     }
 
