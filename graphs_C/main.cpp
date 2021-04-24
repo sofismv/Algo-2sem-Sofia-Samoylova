@@ -2,31 +2,33 @@
 #include <vector>
 #include <algorithm>
 
+enum class colour { WHITE, GRAY, BLACK };
+
 bool dfs(std::vector<int> &tin,
          std::vector<int> &tout,
-         std::vector<std::string> &color,
+         std::vector<colour> &color,
          int &timer,
          int &cycle_vertex,
          std::vector<int> &parent,
          const std::vector<std::vector<int>> &g,
          int v) {
   tin[v] = timer++;
-  color[v] = "GRAY";
+  color[v] = colour::GRAY;
   for (int to : g[v]) {
-    if (color[to] == "WHITE") {
+    if (color[to] == colour::WHITE) {
       parent[to] = v;
       if (dfs(tin, tout, color, timer, cycle_vertex, parent, g, to)) {
         return true;
       }
     }
-    if (color[to] == "GRAY") {
+    if (color[to] == colour::GRAY) {
       parent[to] = v;
       cycle_vertex = v;
       return true;
     }
   }
   tout[v] = timer++;
-  color[v] = "BLACK";
+  color[v] = colour::BLACK;
   return false;
 }
 
@@ -51,13 +53,13 @@ int main() {
   std::vector<int> tin(n);
   std::vector<int> tout(n);
   std::vector<int> parent(n);
-  std::vector<std::string> color(n, "WHITE");
+  std::vector<colour> color(n, colour::WHITE);
   for (int i = 0; i < m; ++i) {
     std::cin >> u >> v;
     g[--u].push_back(--v);
   }
   for (int v = 0; v < n; ++v) {
-    if (color[v] == "WHITE") {
+    if (color[v] == colour::WHITE) {
       if (dfs(tin, tout, color, timer, cycle_vertex, parent, g, v)) {
         std::cout << "YES\n";
         print_cycle(parent, cycle_vertex);
