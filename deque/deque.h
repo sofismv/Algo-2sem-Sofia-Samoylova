@@ -122,7 +122,9 @@ class Deque {
 
     const std::vector<T *> *vector_pointer;
 
-    void recalculate_position(size_t index) {
+    void recalculate_position(int x) {
+      size_t index = cur_buff_index * chunk_size + cur_chunk_index;
+      index += x > 0 ? x : -x;
       cur_chunk_index = index % chunk_size;
       cur_buff_index = index / chunk_size;
       ptr = (*vector_pointer)[cur_buff_index] + cur_chunk_index;
@@ -180,14 +182,12 @@ class Deque {
     }
 
     common_iterator &operator+=(int x) {
-      size_t index = cur_buff_index * chunk_size + cur_chunk_index + x;
-      recalculate_position(index);
+      recalculate_position(x);
       return *this;
     }
 
     common_iterator &operator-=(int x) {
-      size_t index = cur_buff_index * chunk_size + cur_chunk_index - x;
-      recalculate_position(index);
+      recalculate_position(x);
       return *this;
     }
 
