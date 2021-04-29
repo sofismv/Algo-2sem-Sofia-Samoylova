@@ -54,24 +54,41 @@ class Deque {
 
   Deque(size_t size) {
     resize(size / chunk_size + 1);
-    for (size_t i = 0; i < size; ++i) {
-      push_back(T());
+    int index = 0;
+    try {
+      for (; index < size; ++index) {
+        push_back(T());
+      }
+    } catch (...) {
+      for (; index >= 0; --index) {
+        pop_back();
+      }
     }
   }
 
   Deque(size_t size, const T &value) : Deque() {
-    for (size_t i = 0; i < size; ++i) {
-      push_back(value);
+    int index = 0;
+    try {
+      for (; index < size; ++index) {
+        push_back(value);
+      }
+    } catch (...) {
+      for (; index >= 0; --index) {
+        pop_back();
+      }
     }
   }
 
   Deque(const Deque &other) : Deque() {
+    int index = 0;
     try {
       for (size_t i = 0; i < other.size_; ++i) {
         push_back(other[i]);
       }
     } catch (...) {
-      throw;
+      for (; index >= 0; --index) {
+        pop_back();
+      }
     }
   }
 
